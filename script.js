@@ -1,4 +1,5 @@
-""const profissionais = JSON.parse(localStorage.getItem('profissionais')) || [];
+
+const profissionais = JSON.parse(localStorage.getItem('profissionais')) || [];
 const producao = JSON.parse(localStorage.getItem('producaoProfissional')) || [];
 
 function atualizarListaProfissionais() {
@@ -79,5 +80,45 @@ function imprimirRelatorio() {
   window.print();
 }
 
+async function exportarParaPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 10;
+  doc.setFontSize(12);
+  doc.text('Resumo da Produção', 10, y);
+  y += 10;
+
+  const filtroData = document.getElementById('filtroData').value;
+  const filtroProfissional = document.getElementById('filtroProfissional').value.toLowerCase();
+
+  const agrupado = {};
+  producao.forEach(entry => {
+    if ((filtroData && entry.data !== filtroData) ||
+        (filtroProfissional && !entry.profissional.toLowerCase().includes(filtroProfissional))) {
+      return;
+    }
+
+    const chave = `${entry.data}|${entry.profissional}|${entry.valor}`;
+    if (!agrupado[chave]) agrupado[chave] = { quantidade: 0, total: 0 };
+    agrupado[chave].quantidade += entry.quantidade;
+    agrupado[chave].total += entry.quantidade * entry.valor;
+  });
+
+  for (const chave in agrupado) {
+    const [data, profissional, valor] = chave.split('|');
+    const dados = agrupado[chave];
+    const linha = `${formatarData(data)} - ${profissional}: ${dados.quantidade} sacos | R$ ${parseFloat(valor).toFixed(2)} por saco | Total: R$ ${dados.total.toFixed(2)}`;
+    doc.text(linha, 10, y);
+    y += 10;
+    if (y > 280) {
+      doc.addPage();
+      y = 10;
+    }
+  }
+
+  doc.save('resumo_producao.pdf');
+}
+
 atualizarListaProfissionais();
-atualizarResumo();""
+atualizarResumo();
