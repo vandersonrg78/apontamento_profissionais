@@ -1,4 +1,4 @@
-const profissionais = JSON.parse(localStorage.getItem('profissionais')) || [];
+""const profissionais = JSON.parse(localStorage.getItem('profissionais')) || [];
 const producao = JSON.parse(localStorage.getItem('producaoProfissional')) || [];
 
 function atualizarListaProfissionais() {
@@ -37,6 +37,11 @@ function registrarProducao() {
   atualizarResumo();
 }
 
+function formatarData(dataISO) {
+  const [ano, mes, dia] = dataISO.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
 function atualizarResumo() {
   const resumo = document.getElementById('resumo');
   resumo.innerHTML = '<h3>Resumo da Produção</h3>';
@@ -51,15 +56,21 @@ function atualizarResumo() {
       return;
     }
 
-    const chave = `${entry.data} - ${entry.profissional}`;
-    if (!agrupado[chave]) agrupado[chave] = 0;
-    agrupado[chave] += entry.quantidade * entry.valor;
+    const chave = `${entry.data}|${entry.profissional}|${entry.valor}`;
+    if (!agrupado[chave]) agrupado[chave] = { quantidade: 0, total: 0 };
+    agrupado[chave].quantidade += entry.quantidade;
+    agrupado[chave].total += entry.quantidade * entry.valor;
   });
 
   for (const chave in agrupado) {
+    const [data, profissional, valor] = chave.split('|');
+    const dados = agrupado[chave];
     const div = document.createElement('div');
     div.className = 'dia';
-    div.innerHTML = `<strong>${chave}</strong>: <span>R$ ${agrupado[chave].toFixed(2)}</span>`;
+    div.innerHTML = `<strong>${formatarData(data)} - ${profissional}</strong><br>
+                     Quantidade: ${dados.quantidade} sacos<br>
+                     Valor por saco: R$ ${parseFloat(valor).toFixed(2)}<br>
+                     Total: <span>R$ ${dados.total.toFixed(2)}</span>`;
     resumo.appendChild(div);
   }
 }
@@ -69,4 +80,4 @@ function imprimirRelatorio() {
 }
 
 atualizarListaProfissionais();
-atualizarResumo();
+atualizarResumo();""
