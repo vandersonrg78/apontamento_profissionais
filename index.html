@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apontamento de Produção por Profissional</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apontamento de Produção</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Apontamento de Produção</h2>
-    <label for="data">Data</label>
-    <input type="date" id="data" />
+    <h1>Apontamento de Produção</h1>
 
-    <label for="profissional">Profissional</label>
+    <label for="data">Data:</label>
+    <input type="date" id="data"><br>
+
+    <label for="profissional">Profissional:</label>
     <select id="profissional"></select>
-    <button onclick="novoProfissional()">+ Novo Profissional</button>
+    <button onclick="novoProfissional()">+ Novo</button><br>
 
-    <label for="quantidade">Quantidade de Sacos</label>
-    <input type="number" id="quantidade" placeholder="Ex: 15" />
+    <label for="quantidade">Quantidade de sacos:</label>
+    <input type="number" id="quantidade"><br>
 
-    <label for="valor">Valor por Saco (R$)</label>
-    <input type="number" id="valor" step="0.01" placeholder="Ex: 12.50" />
+    <label for="valor">Valor por saco (R$):</label>
+    <input type="number" id="valor" step="0.01"><br>
 
-    <button onclick="registrarProducao()">Registrar Produção</button>
-    <button onclick="imprimirRelatorio()">Imprimir Relatório</button>
+    <button onclick="registrarProducao()">Registrar</button>
+    <button onclick="imprimirRelatorio()">Imprimir</button>
+    <button onclick="exportarParaPDF()">Exportar PDF</button>
 
-    <h3>Filtrar Resumo</h3>
-    <label for="filtroData">Data</label>
-    <input type="date" id="filtroData" oninput="atualizarResumo()" />
+    <h2>Filtros</h2>
+    <label for="filtroData">Filtrar por data:</label>
+    <input type="date" id="filtroData" onchange="atualizarResumo()"><br>
+    <label for="filtroProfissional">Filtrar por profissional:</label>
+    <input type="text" id="filtroProfissional" oninput="atualizarResumo()"><br>
 
-    <label for="filtroProfissional">Profissional</label>
-    <input type="text" id="filtroProfissional" placeholder="Digite o nome" oninput="atualizarResumo()" />
+    <div id="resumo"></div>
 
-    <div class="resumo" id="resumo"></div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
