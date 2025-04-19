@@ -1,93 +1,124 @@
-let profissionais = ['Carlos', 'João', 'Maria'];  // Exemplo de profissionais cadastrados
-let producao = [];
 
-function atualizarProfissionais() {
+const profissionais = JSON.parse(localStorage.getItem('profissionais')) || [];
+const producao = JSON.parse(localStorage.getItem('producaoProfissional')) || [];
+
+function atualizarListaProfissionais() {
   const select = document.getElementById('profissional');
-  const filtro = document.getElementById('filtroProfissional');
-  select.innerHTML = '';  // Limpa as opções anteriores
-  filtro.innerHTML = '<option value="">Todos</option>';  // Adiciona opção padrão "Todos"
-  
-  // Preenche os profissionais no select de cadastro e no filtro
+  select.innerHTML = '';
   profissionais.forEach(nome => {
     const option = document.createElement('option');
+    option.value = nome;
     option.textContent = nome;
     select.appendChild(option);
-
-    const filtroOption = document.createElement('option');
-    filtroOption.textContent = nome;
-    filtro.appendChild(filtroOption);
   });
 }
 
 function novoProfissional() {
-  const nome = prompt("Digite o nome do novo profissional:");
-  if (nome) {
+  const nome = prompt('Digite o nome do novo profissional:');
+  if (nome && !profissionais.includes(nome)) {
     profissionais.push(nome);
-    atualizarProfissionais();
+    localStorage.setItem('profissionais', JSON.stringify(profissionais));
+    atualizarListaProfissionais();
   }
 }
 
 function registrarProducao() {
   const data = document.getElementById('data').value;
   const profissional = document.getElementById('profissional').value;
-  const quantidade = document.getElementById('quantidade').value;
-  const valor = document.getElementById('valor').value;
+  const quantidade = parseFloat(document.getElementById('quantidade').value);
+  const valor = parseFloat(document.getElementById('valor').value);
 
-  if (data && profissional && quantidade && valor) {
-    producao.push({ data, profissional, quantidade: parseInt(quantidade), valor: parseFloat(valor) });
-    atualizarResumo();
-  } else {
-    alert("Preencha todos os campos.");
+  if (!data || !profissional || isNaN(quantidade) || isNaN(valor)) {
+    alert('Por favor, preencha todos os campos corretamente.');
+    return;
   }
+
+  producao.push({ data, profissional, quantidade, valor });
+  localStorage.setItem('producaoProfissional', JSON.stringify(producao));
+  atualizarResumo();
+}
+
+function formatarData(dataISO) {
+  const [ano, mes, dia] = dataISO.split('-');
+  return `${dia}/${mes}/${ano}`;
 }
 
 function atualizarResumo() {
+  const resumo = document.getElementById('resumo');
+  resumo.innerHTML = '<h3>Resumo da Produção</h3>';
+
   const filtroData = document.getElementById('filtroData').value;
-  const filtroProfissional = document.getElementById('filtroProfissional').value;
-  let resumo = '';
+  const filtroProfissional = document.getElementById('filtroProfissional').value.toLowerCase();
 
-  // Filtra as produções por data e profissional
-  const producoesFiltradas = producao.filter(p => {
-    const dataValida = !filtroData || p.data === filtroData;
-    const profissionalValido = !filtroProfissional || p.profissional === filtroProfissional;
-    return dataValida && profissionalValido;
+  const agrupado = {};
+  producao.forEach(entry => {
+    if ((filtroData && entry.data !== filtroData) ||
+        (filtroProfissional && !entry.profissional.toLowerCase().includes(filtroProfissional))) {
+      return;
+    }
+
+    const chave = `${entry.data}|${entry.profissional}|${entry.valor}`;
+    if (!agrupado[chave]) agrupado[chave] = { quantidade: 0, total: 0 };
+    agrupado[chave].quantidade += entry.quantidade;
+    agrupado[chave].total += entry.quantidade * entry.valor;
   });
 
-  producoesFiltradas.forEach(p => {
-    resumo += `
-      <div>
-        <strong>Data:</strong> ${p.data} <strong>Profissional:</strong> ${p.profissional} <strong>Qtd. Sacos:</strong> ${p.quantidade} <strong>Valor por Saco:</strong> R$ ${p.valor.toFixed(2)}
-      </div>
-    `;
-  });
-
-  document.getElementById('resumo').innerHTML = resumo;
-}
-
-function exportarParaPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  // Adicionando cabeçalho do PDF
-  const agora = new Date();
-  document.getElementById('pdfDataHora').textContent = `Data: ${agora.toLocaleDateString()} - Hora: ${agora.toLocaleTimeString()}`;
-  document.getElementById('pdfHeader').style.display = 'block';
-
-  doc.text("Empresa Carlos Colheita Café 2025", 20, 10);
-  doc.text(`Data: ${agora.toLocaleDateString()} - Hora: ${agora.toLocaleTimeString()}`, 20, 20);
-
-  let y = 30;
-  producao.forEach(p => {
-    doc.text(`Data: ${p.data} | Profissional: ${p.profissional} | Qtd. Sacos: ${p.quantidade} | Valor por Saco: R$ ${p.valor.toFixed(2)}`, 20, y);
-    y += 10;
-  });
-
-  doc.save('relatorio_producao.pdf');
+  for (const chave in agrupado) {
+    const [data, profissional, valor] = chave.split('|');
+    const dados = agrupado[chave];
+    const div = document.createElement('div');
+    div.className = 'dia';
+    div.innerHTML = `<strong>${formatarData(data)} - ${profissional}</strong><br>
+                     Quantidade: ${dados.quantidade} sacos<br>
+                     Valor por saco: R$ ${parseFloat(valor).toFixed(2)}<br>
+                     Total: <span>R$ ${dados.total.toFixed(2)}</span>`;
+    resumo.appendChild(div);
+  }
 }
 
 function imprimirRelatorio() {
   window.print();
 }
 
-// Inicializa os profissionais e produção
-atualizarProfissionais();
+async function exportarParaPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 10;
+  doc.setFontSize(12);
+  doc.text('Resumo da Produção', 10, y);
+  y += 10;
+
+  const filtroData = document.getElementById('filtroData').value;
+  const filtroProfissional = document.getElementById('filtroProfissional').value.toLowerCase();
+
+  const agrupado = {};
+  producao.forEach(entry => {
+    if ((filtroData && entry.data !== filtroData) ||
+        (filtroProfissional && !entry.profissional.toLowerCase().includes(filtroProfissional))) {
+      return;
+    }
+
+    const chave = `${entry.data}|${entry.profissional}|${entry.valor}`;
+    if (!agrupado[chave]) agrupado[chave] = { quantidade: 0, total: 0 };
+    agrupado[chave].quantidade += entry.quantidade;
+    agrupado[chave].total += entry.quantidade * entry.valor;
+  });
+
+  for (const chave in agrupado) {
+    const [data, profissional, valor] = chave.split('|');
+    const dados = agrupado[chave];
+    const linha = `${formatarData(data)} - ${profissional}: ${dados.quantidade} sacos | R$ ${parseFloat(valor).toFixed(2)} por saco | Total: R$ ${dados.total.toFixed(2)}`;
+    doc.text(linha, 10, y);
+    y += 10;
+    if (y > 280) {
+      doc.addPage();
+      y = 10;
+    }
+  }
+
+  doc.save('resumo_producao.pdf');
+}
+
+atualizarListaProfissionais();
+atualizarResumo();
