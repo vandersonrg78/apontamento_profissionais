@@ -60,3 +60,10 @@ button:hover {
   color: green;
   font-weight: bold;
 }
+button.novo {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  padding: 0;
+  margin-left: 5px;
+}
