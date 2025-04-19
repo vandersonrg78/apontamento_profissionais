@@ -67,3 +67,9 @@ button.novo {
   padding: 0;
   margin-left: 5px;
 }
+#botoes-superiores {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
