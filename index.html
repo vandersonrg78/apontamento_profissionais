@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apontamento de Produção por Profissional</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Apontamento de Produção</h2>
+    <label for="data">Data</label>
+    <input type="date" id="data" />
+
+    <label for="profissional">Profissional</label>
+    <select id="profissional"></select>
+    <button onclick="novoProfissional()">+ Novo Profissional</button>
+
+    <label for="quantidade">Quantidade de Sacos</label>
+    <input type="number" id="quantidade" placeholder="Ex: 15" />
+
+    <label for="valor">Valor por Saco (R$)</label>
+    <input type="number" id="valor" step="0.01" placeholder="Ex: 12.50" />
+
+    <button onclick="registrarProducao()">Registrar Produção</button>
+    <button onclick="imprimirRelatorio()">Imprimir Relatório</button>
+
+    <h3>Filtrar Resumo</h3>
+    <label for="filtroData">Data</label>
+    <input type="date" id="filtroData" oninput="atualizarResumo()" />
+
+    <label for="filtroProfissional">Profissional</label>
+    <input type="text" id="filtroProfissional" placeholder="Digite o nome" oninput="atualizarResumo()" />
+
+    <div class="resumo" id="resumo"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

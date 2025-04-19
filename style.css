@@ -1,0 +1,62 @@
+body {
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+  background: #f4f4f4;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+label {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+  font-size: 16px;
+  color: #333;
+}
+input, select, button {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+input:focus, select:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+button {
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+.resumo {
+  margin-top: 30px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+.dia {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 5px;
+}
+.dia strong {
+  color: #333;
+}
+.dia span {
+  color: green;
+  font-weight: bold;
+}
