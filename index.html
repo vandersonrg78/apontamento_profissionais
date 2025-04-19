@@ -1,60 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apontamento de Produção</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apontamento de Produção</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div id="botoes-superiores">
-  <button onclick="exportarParaPDF()">Exportar PDF</button>
-  <button onclick="imprimirRelatorio()">Imprimir</button>
-</div>
-
-    <h1>Apontamento de Produção</h1>
-
-   <div class="row">
-  <div>
-    <label for="data">Data:</label>
-    <input type="date" id="data">
+  <div id="botoes-superiores">
+    <button onclick="exportarParaPDF()">Exportar PDF</button>
+    <button onclick="imprimirRelatorio()">Imprimir</button>
   </div>
 
-  <div style="flex: 2;">
-    <label for="profissional">Profissional:</label>
-    <div class="row">
-      <select id="profissional"></select>
-      <button class="novo" onclick="novoProfissional()">+</button>
+  <h1>Apontamento de Produção</h1>
+
+  <div class="row">
+    <div>
+      <label for="data">Data:</label>
+      <input type="date" id="data" />
+    </div>
+
+    <div style="flex: 2">
+      <label for="profissional">Profissional:</label>
+      <div class="row">
+        <select id="profissional"></select>
+        <button class="novo" onclick="novoProfissional()">+</button>
+      </div>
     </div>
   </div>
-</div>
 
-
-   <div class="row">
-  <div>
-    <label for="quantidade">Quantidade de sacos:</label>
-    <input type="number" id="quantidade">
+  <div class="row">
+    <div>
+      <label for="quantidade">Quantidade de sacos:</label>
+      <input type="number" id="quantidade" />
+    </div>
+    <div>
+      <label for="valor">Valor por saco (R$):</label>
+      <input type="number" id="valor" step="0.01" />
+    </div>
   </div>
-  <div>
-    <label for="valor">Valor por saco (R$):</label>
-    <input type="number" id="valor" step="0.01">
+
+  <button onclick="registrarProducao()">Registrar</button>
+
+  <h2>Filtros</h2>
+  <label for="filtroData">Filtrar por data:</label>
+  <input type="date" id="filtroData" onchange="atualizarResumo()" /><br />
+
+  <label for="filtroProfissional">Filtrar por profissional:</label>
+  <select id="filtroProfissional" onchange="atualizarResumo()">
+    <option value="">Todos</option>
+  </select><br />
+
+  <div id="resumo"></div>
+
+  <div id="pdfHeader" style="display:none; text-align:center; margin-bottom: 20px;">
+    <h2>Empresa Carlos Colheita Café 2025</h2>
+    <p id="pdfDataHora"></p>
   </div>
-</div>
 
-
-    <button onclick="registrarProducao()">Registrar</button>
-    <button onclick="imprimirRelatorio()">Imprimir</button>
-    <button onclick="exportarParaPDF()">Exportar PDF</button>
-
-    <h2>Filtros</h2>
-    <label for="filtroData">Filtrar por data:</label>
-    <input type="date" id="filtroData" onchange="atualizarResumo()"><br>
-    <label for="filtroProfissional">Filtrar por profissional:</label>
-    <input type="text" id="filtroProfissional" oninput="atualizarResumo()"><br>
-
-    <div id="resumo"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
