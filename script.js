@@ -53,13 +53,17 @@ function atualizarResumo() {
     return dataValida && profissionalValido;
   });
 
-  producoesFiltradas.forEach(p => {
-    resumo += `
-      <div>
-        <strong>Data:</strong> ${p.data} <strong>Profissional:</strong> ${p.profissional} <strong>Qtd. Sacos:</strong> ${p.quantidade} <strong>Valor por Saco:</strong> R$ ${p.valor.toFixed(2)}
-      </div>
-    `;
-  });
+  if (producoesFiltradas.length === 0) {
+    resumo = '<p>Nenhum registro encontrado.</p>';
+  } else {
+    producoesFiltradas.forEach(p => {
+      resumo += `
+        <div>
+          <strong>Data:</strong> ${p.data} <strong>Profissional:</strong> ${p.profissional} <strong>Qtd. Sacos:</strong> ${p.quantidade} <strong>Valor por Saco:</strong> R$ ${p.valor.toFixed(2)}
+        </div>
+      `;
+    });
+  }
 
   document.getElementById('resumo').innerHTML = resumo;
 }
